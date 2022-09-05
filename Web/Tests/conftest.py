@@ -1,48 +1,48 @@
 import os.path
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.service import Service as FirefoxService
 import pytest
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 class Fixtures:
+    @staticmethod
+    def gh_token():
+        path = 'C://Users//yossi//PycharmProjects//python_Lessons/gh_token.txt'
+        token = open(path).read()
+        return token
+
     @pytest.fixture(autouse=True)
     def set_up(self, browser):
         if browser == 'chrome':
             print('\n------------------------------')
             print('Initialing Chrome Driver')
             print('------------------------------')
-            path = 'C://Users/yossi/PycharmProjects/python_Lessons/Selenium/Drivers/ChromeWebDriver/chromedriver.exe'
-            self.driver = webdriver.Chrome(executable_path=path)
+            self.driver = webdriver.Chrome(ChromeDriverManager().install())
             print('\n------------------------------')
             print('Test is Started')
             print('------------------------------')
-            self.driver.implicitly_wait(25)
-            self.driver.maximize_window()
-            yield self.driver
-            if self.driver is not None:
-                print("\n----------------------------")
-                print("Tests is finished")
-                print('----------------------------')
-                self.driver.close()
-                self.driver.quit()
         elif browser == 'firefox':
             print('\n------------------------------')
+            os.environ['GH_TOKEN'] = self.gh_token()
             print('Initialing FireFox Driver')
             print('------------------------------')
-            path = 'C://Users/yossi/PycharmProjects/python_Lessons/Selenium/Drivers/FireFoxWebDriver/geckodriver.exe'
-            self.driver = webdriver.Firefox(service_log_path=os.path.devnull, executable_path=path)
+            self.driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
             print('\n------------------------------')
             print('Test is Started')
             print('------------------------------')
-            self.driver.implicitly_wait(25)
-            self.driver.maximize_window()
-            yield self.driver
-            if self.driver is not None:
-                print("\n----------------------------")
-                print("Tests is finished")
-                print('----------------------------')
-                self.driver.close()
-                self.driver.quit()
         else:
             raise ValueError('No Driver')
+        self.driver.implicitly_wait(25)
+        self.driver.maximize_window()
+        yield self.driver
+        if self.driver is not None:
+            print("\n----------------------------")
+            print("Tests is finished")
+            print('----------------------------')
+            self.driver.close()
+            self.driver.quit()
 
     @pytest.fixture()
     def url_navigation(self, url):

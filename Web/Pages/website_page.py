@@ -8,6 +8,5 @@ class Website_Page:
         self.wait = WebDriverWait(self.driver, 30)
         self.searchLink = Website_Locators.SEARCH_LINK
         self.validationForSearchLink = Website_Locators.VALIDATION_FOR_SEARCH_LINK
-        self.serachInput = Website_Locators.SEARCH_INPUT
+        self.searchInput = Website_Locators.SEARCH_INPUT
         self.prodsLength = Website_Locators.PRODS_LENGTH
-
